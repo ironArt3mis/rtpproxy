@@ -1,0 +1,33 @@
+Source: rtpproxy
+Section: net
+Priority: optional
+Maintainer: Debian VoIP Team <pkg-voip-maintainers@lists.alioth.debian.org>
+Uploaders: Mark Purcell <msp@debian.org>, Kilian Krause <kilian@debian.org>
+Build-Depends: debhelper (>= 9), autotools-dev, autoconf, automake, xsltproc, 
+    docbook-xsl, docbook-xml, dh-systemd, libsndfile1-dev, quilt
+Standards-Version: 3.9.5
+Homepage: http://www.rtpproxy.org
+Vcs-Svn: svn://anonscm.debian.org/pkg-voip/rtpproxy/trunk/
+Vcs-Browser: http://anonscm.debian.org/viewvc/pkg-voip/rtpproxy/
+
+Package: rtpproxy
+Architecture: any
+Depends: adduser, ${shlibs:Depends}, ${misc:Depends}
+Suggests: ser | openser
+Description: Relay for Real-time Transport Protocol (RTP) media streams
+ A high-performance media relay for RTP streams that can work together
+ with SIP Express Router, OpenSER or Sippy B2BUA. Its main use is to
+ support SIP user agents behind NAT, but it can also act as a generic media
+ relay.
+ .
+ The main purpose of RTPproxy is to make the communication between SIP
+ user agents behind NAT(s) (Network Address Translator) possible. Several
+ cases exists when direct end-to-end communication is not possible and
+ RTP streams have to be relayed through another host. The RTPproxy can
+ be used to setup such a relaying host. 
+ .
+ Originally created for handling NAT scenarious it can also act as a
+ generic media relay as well as gateway RTP sessions between IPv4 and
+ IPv6 networks. It can also perform number of additional functions,
+ including call recording, playing pre-encoded announcements, real-time
+ stream copying and RTP payload reframing.
