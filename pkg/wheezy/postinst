@@ -1,0 +1,13 @@
+#!/bin/sh 
+
+set -e
+
+case "$1" in
+    configure)
+	if ! id rtpproxy > /dev/null 2>&1 ; then
+	    adduser --system --no-create-home --group rtpproxy
+	fi
+    ;;
+esac
+
+#DEBHELPER#
