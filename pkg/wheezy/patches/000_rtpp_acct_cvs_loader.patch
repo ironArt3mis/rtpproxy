@@ -9,7 +9,7 @@
 -#else
 -      "../modules/acct_csv/.libs/rtpp_acct_csv_debug.so");
 -#endif
-+    "/usr/lib/x86_64-linux-gnu/rtpproxy/rtpp_acct_csv.so");
++    "/usr/lib/mips-linux-gnu/rtpproxy/rtpp_acct_csv.so");
  #endif
  
      cf.stable->rtpp_cmd_cf = rtpp_command_async_ctor(&cf);
