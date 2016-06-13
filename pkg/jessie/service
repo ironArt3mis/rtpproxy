@@ -5,7 +5,7 @@ After=network.target
 [Service]
 EnvironmentFile=/etc/default/rtpproxy
 PIDFile=/var/run/rtpproxy.pid
-ExecStart=/usr/bin/rtpproxy -u root -f -p /var/run/rtpproxy.pid -s $CONTROL_SOCK -l $AUDIO_SOCK -r $RECORDINGS_DIR $EXTRA_OPTS
+ExecStart=/usr/bin/rtpproxy -u root -f -p /var/run/rtpproxy.pid -s $CONTROL_SOCK -l $AUDIO_SOCK -r $RECORDINGS_DIR -S $RECORDINGS_SPOOL $EXTRA_OPTS
 
 [Install]
 WantedBy=multi-user.target

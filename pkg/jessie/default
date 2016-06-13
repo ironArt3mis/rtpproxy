@@ -6,8 +6,11 @@ CONTROL_SOCK=udp:127.0.0.1:22222
 # Audio socket
 AUDIO_SOCK=EDIT
 
+# Destination files for incompleted recordings
+RECORDINGS_SPOOL="/var/spool/recordings/"
+
 # Destination files for recordings
-RECORDINGS_DIR="/opt/irontec/ivozprovider/storage/ivozprovider_recordings.originalfile/"
+RECORDINGS_DIR="/opt/irontec/ivozprovider/storage/ivozprovider_model_recordings.originalfile/"
 
 # Additional options that are passed to the daemon
 EXTRA_OPTS="-m 13000 -M 17000 -t 184 -R"
