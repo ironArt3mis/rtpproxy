@@ -10,4 +10,4 @@ AUDIO_SOCK=EDIT
 RECORDINGS_DIR="/opt/irontec/ivozprovider/storage/ivozprovider_recordings.originalfile/"
 
 # Additional options that are passed to the daemon
-EXTRA_OPTS="-m 13000 -M 17000 -t 184"
+EXTRA_OPTS="-m 13000 -M 17000 -t 184 -R"
