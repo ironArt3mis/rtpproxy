@@ -7,7 +7,7 @@ CONTROL_SOCK=udp:127.0.0.1:22222
 AUDIO_SOCK=EDIT
 
 # Destination files for incompleted recordings
-RECORDINGS_SPOOL="/var/spool/recordings/"
+RECORDINGS_SPOOL="/opt/irontec/ivozprovider/storage/ivozprovider_model_recordings.tmp/"
 
 # Destination files for recordings
 RECORDINGS_DIR="/opt/irontec/ivozprovider/storage/ivozprovider_model_recordings.originalfile/"
