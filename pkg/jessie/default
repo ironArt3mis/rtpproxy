@@ -1,10 +1,10 @@
 # Defaults for rtpproxy
 
 # Control socket
-CONTROL_SOCK=udp:127.0.0.1:22222
+CONTROL_SOCK=udp:#RTPPROXY_ADDRESS#:22222
 
 # Audio socket
-AUDIO_SOCK=EDIT
+AUDIO_SOCK=#RTPPROXY_ADDRESS#
 
 # Destination files for incompleted recordings
 RECORDINGS_SPOOL="/opt/irontec/ivozprovider/storage/ivozprovider_model_recordings.tmp/"
