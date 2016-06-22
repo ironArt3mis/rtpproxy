@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian VoIP Team <pkg-voip-maintainers@lists.alioth.debian.org>
 Uploaders: Mark Purcell <msp@debian.org>, Kilian Krause <kilian@debian.org>
 Build-Depends: debhelper (>= 9), autotools-dev, autoconf, automake, xsltproc, 
-    docbook-xsl, docbook-xml, libsndfile1-dev, quilt
+    docbook-xsl, docbook-xml, libsndfile1-dev, quilt, libbcg729-0
 Standards-Version: 3.9.5
 Homepage: http://www.rtpproxy.org
 Vcs-Svn: svn://anonscm.debian.org/pkg-voip/rtpproxy/trunk/
