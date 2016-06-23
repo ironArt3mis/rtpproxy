@@ -3,7 +3,7 @@
 # Control socket
 CONTROL_SOCK=udp:127.0.0.1:22222
 
-# Audio socket
+# Audio socket. Configure with the public address that will be included in SDP connection
 AUDIO_SOCK=0.0.0.0
 
 # Destination files for incompleted recordings
