@@ -3,6 +3,9 @@
 export DEB_BUILD_HARDENING=1
 
 override_dh_auto_test:
+
+override_dh_systemd_start:
+	dh_systemd_start --no-restart-on-upgrade
 	
 %:
 	dh $@ --with quilt --with systemd
