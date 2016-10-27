@@ -14,6 +14,7 @@ Package: ivozprovider-rtpproxy
 Architecture: any
 Depends: adduser, ${shlibs:Depends}, ${misc:Depends}
 Replaces: rtpproxy
+Conflicts: rtpproxy
 Suggests: ser | openser
 Description: Relay for Real-time Transport Protocol (RTP) media streams
  A high-performance media relay for RTP streams that can work together
