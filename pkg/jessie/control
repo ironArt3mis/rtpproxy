@@ -16,7 +16,7 @@ Depends: adduser, ${shlibs:Depends}, ${misc:Depends}
 Replaces: rtpproxy
 Conflicts: rtpproxy
 Suggests: ser | openser
-Description: Relay for Real-time Transport Protocol (RTP) media streams
+Description: IVOZ Provider - Relay for Real-time Transport Protocol (RTP) media streams
  A high-performance media relay for RTP streams that can work together
  with SIP Express Router, OpenSER or Sippy B2BUA. Its main use is to
  support SIP user agents behind NAT, but it can also act as a generic media
