@@ -3,6 +3,8 @@ Description=A symmetric RTP proxy
 After=network.target
 
 [Service]
+LimitCORE=infinity
+LimitNOFILE=65535
 EnvironmentFile=/etc/default/rtpproxy
 PIDFile=/var/run/rtpproxy.pid
 ExecStart=/usr/bin/rtpproxy -u root -f -p /var/run/rtpproxy.pid -s $CONTROL_SOCK -l $AUDIO_SOCK -r $RECORDINGS_DIR -S $RECORDINGS_SPOOL $EXTRA_OPTS
