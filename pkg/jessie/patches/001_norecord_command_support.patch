@@ -1,0 +1,230 @@
+diff --git a/src/rtpp_command.c b/src/rtpp_command.c
+index f570399..f3086f0 100644
+--- a/src/rtpp_command.c
++++ b/src/rtpp_command.c
+@@ -538,6 +538,10 @@ handle_command(struct cfg *cf, struct rtpp_command *cmd)
+ 	i = handle_record(cf, &cmd->cca, record_single_file);
+ 	break;
+ 
++    case NORECORD:
++	i = handle_norecord(cf, &cmd->cca);
++	break;
++
+     default:
+ 	i = find_stream(cf, cmd->cca.call_id, cmd->cca.from_tag,
+ 	  cmd->cca.to_tag, &spa);
+@@ -566,6 +570,7 @@ handle_command(struct cfg *cf, struct rtpp_command *cmd)
+     switch (cmd->cca.op) {
+     case DELETE:
+     case RECORD:
++    case NORECORD:
+ 	reply_ok(cmd);
+ 	break;
+ 
+diff --git a/src/rtpp_command_copy.c b/src/rtpp_command_copy.c
+index ce21f28..477f15a 100644
+--- a/src/rtpp_command_copy.c
++++ b/src/rtpp_command_copy.c
+@@ -93,3 +93,25 @@ handle_copy(struct cfg *cf, struct rtpp_session *spa, int idx, char *rname,
+     }
+     return (0);
+ }
++
++int
++handle_copy_close(struct cfg *cf, struct rtpp_session *spa, int idx)
++{
++    struct rtpp_record_channel *rrc;
++
++    if (spa->rtp->stream[idx]->rrc != NULL) {
++        RTPP_LOG(spa->log, RTPP_LOG_INFO,
++          "stopping recording RTP session on port %d", spa->rtp->stream[idx]->port);
++        rtpp_record_close(spa->rtp->stream[idx]->rrc);
++        spa->rtp->stream[idx]->rrc = NULL;
++    }
++
++    if (spa->rtcp->stream[idx]->rrc != NULL && cf->stable->rrtcp != 0) {
++        RTPP_LOG(spa->log, RTPP_LOG_INFO,
++          "stopping recording RTCP session on port %d", spa->rtcp->stream[idx]->port);
++        rtpp_record_close(spa->rtcp->stream[idx]->rrc);
++        spa->rtcp->stream[idx]->rrc = NULL;
++    }
++
++    return (0);
++}
+diff --git a/src/rtpp_command_copy.h b/src/rtpp_command_copy.h
+index 3fc6f64..120c722 100644
+--- a/src/rtpp_command_copy.h
++++ b/src/rtpp_command_copy.h
+@@ -34,4 +34,6 @@ struct rtpp_session;
+ int handle_copy(struct cfg *cf, struct rtpp_session *spa, int idx, char *rname,
+   int record_single_file);
+ 
++int handle_copy_close(struct cfg *cf, struct rtpp_session *spa, int idx);
++
+ #endif
+diff --git a/src/rtpp_command_parse.c b/src/rtpp_command_parse.c
+index 67c603a..4829f62 100644
+--- a/src/rtpp_command_parse.c
++++ b/src/rtpp_command_parse.c
+@@ -126,6 +126,18 @@ fill_cmd_props(struct cfg *cf, struct rtpp_command *cmd,
+         cpp->tpos = 3;
+         break;
+ 
++    case 'f':
++    case 'F':
++        cmd->cca.op = NORECORD;
++        cmd->cca.rname = "norecord";
++        cmd->cca.hint = "F call_id from_tag [to_tag]";
++        cpp->max_argc = 4;
++        cpp->min_argc = 3;
++        cpp->has_cmods = 1;
++        cpp->fpos = 2;
++        cpp->tpos = 3;
++        break;
++
+     case 'c':
+     case 'C':
+         cmd->cca.op = COPY;
+diff --git a/src/rtpp_command_private.h b/src/rtpp_command_private.h
+index db545b4..a66fddb 100644
+--- a/src/rtpp_command_private.h
++++ b/src/rtpp_command_private.h
+@@ -50,7 +50,7 @@ struct rtpp_command_stats {
+ 
+ #define RTPC_MAX_ARGC   20
+ 
+-enum rtpp_cmd_op {DELETE, RECORD, PLAY, NOPLAY, COPY, UPDATE, LOOKUP, INFO,
++enum rtpp_cmd_op {DELETE, RECORD, NORECORD, PLAY, NOPLAY, COPY, UPDATE, LOOKUP, INFO,
+   QUERY, VER_FEATURE, GET_VER, DELETE_ALL, GET_STATS};
+ 
+ struct common_cmd_args {
+diff --git a/src/rtpp_command_record.c b/src/rtpp_command_record.c
+index 6c73fc2..1c6d198 100644
+--- a/src/rtpp_command_record.c
++++ b/src/rtpp_command_record.c
+@@ -94,3 +94,44 @@ handle_record(struct cfg *cf, struct common_cmd_args *ccap,
+     }
+     return 0;
+ }
++
++static int
++rtpp_cmd_norecord_ematch(void *dp, void *ap)
++{
++    struct rtpp_session *spa;
++    int idx;
++    struct record_ematch_arg *rep;
++
++    spa = (struct rtpp_session *)dp;
++    rep = (struct record_ematch_arg *)ap;
++
++    if (compare_session_tags(spa->tag, rep->from_tag, NULL) != 0) {
++        idx = 1;
++    } else if (rep->to_tag != NULL &&
++      (compare_session_tags(spa->tag, rep->to_tag, NULL)) != 0) {
++        idx = 0;
++    } else {
++        return(RTPP_HT_MATCH_CONT);
++    }
++    if (handle_copy_close(rep->cf, spa, idx) == 0) {
++        rep->nrecorded++;
++    }
++    return(RTPP_HT_MATCH_CONT);
++}
++
++int
++handle_norecord(struct cfg *cf, struct common_cmd_args *ccap)
++{
++    struct record_ematch_arg rea;
++
++    memset(&rea, '\0', sizeof(rea));
++    rea.from_tag = ccap->from_tag;
++    rea.to_tag = ccap->to_tag;
++    rea.cf = cf;
++    CALL_METHOD(cf->stable->sessions_ht, foreach_key, ccap->call_id,
++      rtpp_cmd_norecord_ematch, &rea);
++    if (rea.nrecorded == 0) {
++        return -1;
++    }
++    return 0;
++}
+diff --git a/src/rtpp_record.c b/src/rtpp_record.c
+index 54f043c..3864d86 100644
+--- a/src/rtpp_record.c
++++ b/src/rtpp_record.c
+@@ -84,7 +84,7 @@ struct rtpp_record_channel {
+ };
+ 
+ static void rtpp_record_write(struct rtpp_record *, struct rtpp_stream *, struct rtp_packet *);
+-static void rtpp_record_close(struct rtpp_record_channel *);
++static void rtpp_record_channel_close(struct rtpp_record_channel *);
+ static int get_hdr_size(struct sockaddr *);
+ 
+ #define PUB2PVT(pubp) \
+@@ -181,7 +181,7 @@ rtpp_record_open(struct cfg *cf, struct rtpp_session *sp, char *rname, int orig,
+         if (rval < 0) {
+             goto e2;
+         }
+-        CALL_METHOD(rrc->pub.rcnt, attach, (rtpp_refcnt_dtor_t)&rtpp_record_close,
++        CALL_METHOD(rrc->pub.rcnt, attach, (rtpp_refcnt_dtor_t)&rtpp_record_channel_close,
+           rrc);
+         return (&rrc->pub);
+     }
+@@ -250,7 +250,7 @@ rtpp_record_open(struct cfg *cf, struct rtpp_session *sp, char *rname, int orig,
+ 	}
+     }
+ 
+-    CALL_METHOD(rrc->pub.rcnt, attach, (rtpp_refcnt_dtor_t)&rtpp_record_close,
++    CALL_METHOD(rrc->pub.rcnt, attach, (rtpp_refcnt_dtor_t)&rtpp_record_channel_close,
+       rrc);
+     return (&rrc->pub);
+ 
+@@ -596,11 +596,12 @@ rtpp_record_write(struct rtpp_record *self, struct rtpp_stream *stp, struct rtp_
+     rrc->rbuf_len += packet->size;
+ }
+ 
+-static void
+-rtpp_record_close(struct rtpp_record_channel *rrc)
++void
++rtpp_record_channel_close(struct rtpp_record_channel *rrc)
+ {
+     static int keep = 1;
+ 
++    if (!rrc) return;
+     rtpp_record_fin(&rrc->pub);
+     if (rrc->mode != MODE_REMOTE_RTP && rrc->rbuf_len > 0)
+ 	flush_rbuf(rrc);
+@@ -625,3 +626,13 @@ done:
+ 
+     free(rrc);
+ }
++
++void
++rtpp_record_close(struct rtpp_record *self)
++{
++    struct rtpp_record_channel *rrc;
++    rrc = PUB2PVT(self);
++    if (!rrc || rrc->fd == -1)
++        return;
++    rtpp_record_channel_close(rrc);
++}
+diff --git a/src/rtpp_record.h b/src/rtpp_record.h
+index a245bd4..e885b89 100644
+--- a/src/rtpp_record.h
++++ b/src/rtpp_record.h
+@@ -49,4 +49,6 @@ struct rtpp_record {
+ /* Function prototypes */
+ struct rtpp_record *rtpp_record_open(struct cfg *cf, struct rtpp_session *, char *, int, int);
+ 
++void rtpp_record_close(struct rtpp_record *rrc);
++
+ #endif
+diff --git a/src/rtpp_command_record.h b/src/rtpp_command_record.h
+index 7da6c1e..9c55626 100644
+--- a/src/rtpp_command_record.h
++++ b/src/rtpp_command_record.h
+@@ -31,3 +31,5 @@ struct common_cmd_args;
+ 
+ int handle_record(struct cfg *, struct common_cmd_args *, int);
+ 
++int handle_norecord(struct cfg *cf, struct common_cmd_args *ccap);
++
