@@ -1,0 +1,51 @@
+diff --git a/src/rtpp_record.c b/src/rtpp_record.c
+index 54f043c..4c4e24d 100644
+--- a/src/rtpp_record.c
++++ b/src/rtpp_record.c
+@@ -210,17 +210,17 @@ rtpp_record_open(struct cfg *cf, struct rtpp_session *sp, char *rname, int orig,
+ 	sdir = cf->stable->sdir;
+ 	rrc->needspool = 1;
+ 	if (rname == NULL) {
+-	    sprintf(rrc->rpath, "%s/%s=%s%s%s", cf->stable->rdir, sp->call_id, sp->tag_nomedianum,
+-	      suffix1, suffix2);
++	    sprintf(rrc->rpath, "%s/%s=%s.%d%s%s", cf->stable->rdir, sp->call_id, sp->tag_nomedianum,
++	      sp->recordcnt, suffix1, suffix2);
+ 	} else {
+-	    sprintf(rrc->rpath, "%s/%s%s", cf->stable->rdir, rname, suffix2);
++	    sprintf(rrc->rpath, "%s/%s.%d%s", cf->stable->rdir, rname, sp->recordcnt, suffix2);
+ 	}
+     }
+     if (rname == NULL) {
+-	sprintf(rrc->spath, "%s/%s=%s%s%s", sdir, sp->call_id, sp->tag_nomedianum,
+-	  suffix1, suffix2);
++	sprintf(rrc->spath, "%s/%s=%s.%d%s%s", sdir, sp->call_id, sp->tag_nomedianum,
++	  sp->recordcnt, suffix1, suffix2);
+     } else {
+-	sprintf(rrc->spath, "%s/%s%s", sdir, rname, suffix2);
++	sprintf(rrc->spath, "%s/%s.%d%s", sdir, rname, sp->recordcnt,suffix2);
+     }
+     rrc->fd = open(rrc->spath, O_WRONLY | O_CREAT | O_TRUNC, DEFFILEMODE);
+     if (rrc->fd == -1) {
+@@ -250,6 +250,8 @@ rtpp_record_open(struct cfg *cf, struct rtpp_session *sp, char *rname, int orig,
+ 	}
+     }
+ 
++	sp->recordcnt++;
++
+     CALL_METHOD(rrc->pub.rcnt, attach, (rtpp_refcnt_dtor_t)&rtpp_record_channel_close,
+       rrc);
+     return (&rrc->pub);
+diff --git a/src/rtpp_session.h b/src/rtpp_session.h
+index bc38422..933c512 100644
+--- a/src/rtpp_session.h
++++ b/src/rtpp_session.h
+@@ -59,6 +59,9 @@ struct rtpp_session {
+ 
+     /* Refcounter */
+     struct rtpp_refcnt *rcnt;
++
++    /* Record count, allows multiple recordings within same session */
++    int recordcnt;
+ };
+ 
+ struct cfg;
