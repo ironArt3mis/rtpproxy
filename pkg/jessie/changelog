@@ -1,3 +1,10 @@
+ivozprovider-rtpproxy (1.1.0) UNRELEASED; urgency=medium
+
+  * Version bump to 1.1.0
+  * Reversioned to display ivozprovider version: APT will consider this a downgroad
+
+ -- Irontec IvozProvider Team <dev@lists-ivozprovider.irontec.com>  Mon, 14 Nov 2016 19:12:30 +0100
+
 ivozprovider-rtpproxy (2.0.0) UNRELEASED; urgency=medium
 
    * Debian package from IvozProvider
