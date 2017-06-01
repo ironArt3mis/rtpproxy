@@ -1,17 +1,23 @@
-ivozprovider-rtpproxy (1.2.0) UNRELEASED; urgency=medium
+ivozprovider-rtpproxy (1.3.0) UNRELEASED; urgency=medium
+
+  * Version bump to 1.3.0
+
+ -- Irontec IvozProvider Team <dev@lists-ivozprovider.irontec.com> Thu, 01 Jun 2017 19:16:10 +0200
+
+ivozprovider-rtpproxy (1.2.0) stable; urgency=medium
 
   * Version bump to 1.2.0
 
  -- Irontec IvozProvider Team <dev@lists-ivozprovider.irontec.com>  Fri, 07 Apr 2017 12:07:53 +0200
 
-ivozprovider-rtpproxy (1.1.0) UNRELEASED; urgency=medium
+ivozprovider-rtpproxy (1.1.0) stable; urgency=medium
 
   * Version bump to 1.1.0
   * Reversioned to display ivozprovider version: APT will consider this a downgroad
 
  -- Irontec IvozProvider Team <dev@lists-ivozprovider.irontec.com>  Mon, 14 Nov 2016 19:12:30 +0100
 
-ivozprovider-rtpproxy (2.0.0) UNRELEASED; urgency=medium
+ivozprovider-rtpproxy (2.0.0) stable; urgency=medium
 
    * Debian package from IvozProvider
 
