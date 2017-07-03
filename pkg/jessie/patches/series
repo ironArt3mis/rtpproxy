@@ -2,3 +2,4 @@
 001_norecord_command_support.patch
 002_multiple_records_support.patch
 003_record_both_stream_directions.patch
+004_record_skip_pending_frames.patch
