@@ -1,0 +1,23 @@
+diff --git a/src/rtpp_record.c b/src/rtpp_record.c
+index d12cc5f..41e41eb 100644
+--- a/src/rtpp_record.c
++++ b/src/rtpp_record.c
+@@ -596,13 +596,17 @@ rtpp_record_write(struct rtpp_record *self, struct rtpp_stream *stp, struct rtp_
+     rrc->rbuf_len += packet->size;
+ }
+ 
++static void rtpp_record_write_skip(void *pub) {
++    //! Skip any pending frames on current recording
++}
++
+ void
+ rtpp_record_channel_close(struct rtpp_record_channel *rrc)
+ {
+     static int keep = 1;
+ 
+     if (!rrc) return;
+-    rtpp_record_fin(&rrc->pub);
++    rrc->pub.write = (rtpp_record_write_t)&rtpp_record_write_skip;
+     if (rrc->mode != MODE_REMOTE_RTP && rrc->rbuf_len > 0)
+ 	flush_rbuf(rrc);
+ 

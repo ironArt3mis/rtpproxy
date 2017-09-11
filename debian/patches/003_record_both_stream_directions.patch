@@ -1,0 +1,43 @@
+index 1c6d198..cdb553c 100644
+--- a/src/rtpp_command_record.c
++++ b/src/rtpp_command_record.c
+@@ -70,9 +70,13 @@ rtpp_cmd_record_ematch(void *dp, void *ap)
+     } else {
+         return(RTPP_HT_MATCH_CONT);
+     }
+-    if (handle_copy(rep->cf, spa, idx, NULL, rep->record_single_file) == 0) {
++    if (handle_copy(rep->cf, spa, 0, NULL, rep->record_single_file) == 0) {
+         rep->nrecorded++;
+     }
++    if (handle_copy(rep->cf, spa, 1, NULL, rep->record_single_file) == 0) {
++        rep->nrecorded++;
++    }
++    spa->recordcnt++;
+     return(RTPP_HT_MATCH_CONT);
+ }
+ 
+@@ -113,7 +117,10 @@ rtpp_cmd_norecord_ematch(void *dp, void *ap)
+     } else {
+         return(RTPP_HT_MATCH_CONT);
+     }
+-    if (handle_copy_close(rep->cf, spa, idx) == 0) {
++    if (handle_copy_close(rep->cf, spa, 0) == 0) {
++        rep->nrecorded++;
++    }
++    if (handle_copy_close(rep->cf, spa, 1) == 0) {
+         rep->nrecorded++;
+     }
+     return(RTPP_HT_MATCH_CONT);
+diff --git a/src/rtpp_record.c b/src/rtpp_record.c
+index a523fdf..d12cc5f 100644
+--- a/src/rtpp_record.c
++++ b/src/rtpp_record.c
+@@ -250,8 +250,6 @@ rtpp_record_open(struct cfg *cf, struct rtpp_session *sp, char *rname, int orig,
+ 	}
+     }
+ 
+-	sp->recordcnt++;
+-
+     CALL_METHOD(rrc->pub.rcnt, attach, (rtpp_refcnt_dtor_t)&rtpp_record_channel_close,
+       rrc);
+     return (&rrc->pub);
