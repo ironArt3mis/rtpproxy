@@ -1,7 +1,7 @@
 Source: ivozprovider-rtpproxy
 Section: net
 Priority: optional
-Maintainer: Irontec Package Team <packages@irontec.com>
+Maintainer: Irontec IvozProvider Team <ivozprovider@irontec.com>
 Uploaders: Mark Purcell <msp@debian.org>, Kilian Krause <kilian@debian.org>
 Build-Depends: debhelper (>= 9), autotools-dev, autoconf, automake, xsltproc, 
     docbook-xsl, docbook-xml, dh-systemd, libsndfile1-dev, quilt, libbcg729-0
