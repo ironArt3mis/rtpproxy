@@ -1,8 +1,14 @@
-ivozprovider-rtpproxy (2.2~2.0.0) UNRELEASED; urgency=medium
+ivozprovider-rtpproxy (2.3~2.0.0) UNRELEASED; urgency=medium
+
+  * Version bump to 2.3.0
+
+ -- Irontec IvozProvider Team <ivozprovider@irontec.com>  Thu, 31 May 2018 13:12:44 +0200
+
+ivozprovider-rtpproxy (2.2~2.0.0) stable; urgency=medium
 
   * Version bump to 2.2.0
 
- -- Irontec IvozProvider Team <ivozprovider@irontec.com>  Mon, 23 Apr 2018 18:04:47 +0200
+ -- Irontec IvozProvider Team <ivozprovider@irontec.com>  Thu, 31 May 2018 13:12:23 +0200
 
 ivozprovider-rtpproxy (2.1~2.0.0) stable; urgency=medium
 
